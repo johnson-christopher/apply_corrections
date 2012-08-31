@@ -80,7 +80,6 @@ def corrected_messages(nick, log, correction):
         if print_limit and len(corrected_messages) >= print_limit:
             break
         original = message.get('message', '')
-        timestamp = message.get('timestamp', 0)
         if original:
             try:
                 match = re.match(re.compile('.*%s.*' % pattern), original)
@@ -91,6 +90,11 @@ def corrected_messages(nick, log, correction):
                     corrected = apply_correction(original,
                                                  pattern,
                                                  replacement)
+                    timeformat = weechat.config_string(
+                        weechat.config_get('weechat.look.buffer_time_format'))
+                    timestamp = time.strftime(
+                        timeformat,
+                        time.localtime(float(message['timestamp'])))
                     corrected_messages.append({'nick': nick,
                                                'corrected': corrected,
                                                'correction': correction,
