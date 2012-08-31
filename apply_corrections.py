@@ -44,7 +44,7 @@ SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
 settings = {'check_every': '5',
             'data_timeout': '60',
             'message_limit': '2',
-            'print_format': '%(nick)s: %(corrected)s',
+            'print_format': '[nick]: [corrected]',
             'print_limit': '1'}
 
 # Initialize the dictionary to store most recent messages per buffer per nick.
@@ -192,14 +192,10 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
             if log and correction:
                 printformat = weechat.config_get_plugin('print_format')
                 for cm in corrected_messages(nick, log, correction):
-                    try:
-                        corrected_msg = printformat % cm
-                    except KeyError:
-                        weechat.config_set_plugin('print_format', 'default')
-                        printformat = weechat.config_get_plugin('print_format')
-                        corrected_msg = printformat % cm
-                    finally:
-                        weechat.prnt(buffer, corrected_msg)
+                    corrected_msg = printformat
+                    for k, v in cm.iteritems():
+                        corrected_msg = corrected_msg.replace('[%s]' % k, v)
+                    weechat.prnt(buffer, corrected_msg)
         else:
             # If it's not a correction, store the message in LASTWORDS.
             log.insert(0, {'message': message, 'timestamp': date})
@@ -265,15 +261,15 @@ def desc_options():
 
     weechat.config_set_desc_plugin(
             'print_format',
-            'Format string for the printed corrections (Default: "%(nick)s: '\
-            '%(corrected)s"). Variables allowed:\n'\
-            '       nick: The nick of the person who sent the messages.\n'\
-            '  corrected: The corrected text of the previous message(s).\n'
-            ' correction: The correction (format: s/typo/replacement).\n'\
-            '   original: The original message before correction.\n'\
-            '    pattern: The "typo" portion of the correction.\n'\
-            'replacement: The "replacement" portion of the correction.\n'\
-            '  timestamp: The timestamp of the original message.\n')
+            'Format string for the printed corrections (Default: "[nick]: '\
+            '[corrected]"). Variables allowed:\n'\
+            '       [nick]: The nick of the person who sent the messages.\n'\
+            '  [corrected]: The corrected text of the previous message(s).\n'
+            ' [correction]: The correction (format: s/typo/replacement).\n'\
+            '   [original]: The original message before correction.\n'\
+            '    [pattern]: The "typo" portion of the correction.\n'\
+            '[replacement]: The "replacement" portion of the correction.\n'\
+            '  [timestamp]: The timestamp of the original message.\n')
 
     weechat.config_set_desc_plugin(
             'print_limit',
