@@ -81,17 +81,24 @@ def corrected_messages(nick, log, correction):
             break
         original = message.get('message', '')
         timestamp = message.get('timestamp', 0)
-        if original and re.match(re.compile('.*%s.*' % pattern), original):
-            corrected = apply_correction(original,
-                                         pattern,
-                                         replacement)
-            corrected_messages.append({'nick': nick,
-                                       'corrected': corrected,
-                                       'correction': correction,
-                                       'original': original,
-                                       'pattern': pattern,
-                                       'replacement': replacement,
-                                       'timestamp': timestamp})
+        if original:
+            m = None
+            try:
+                m = re.match(re.compile('.*%s.*' % pattern), original)
+            except:
+                m = re.match(pattern, original)
+            finally:
+                if m:
+                    corrected = apply_correction(original,
+                                                 pattern,
+                                                 replacement)
+                    corrected_messages.append({'nick': nick,
+                                               'corrected': corrected,
+                                               'correction': correction,
+                                               'original': original,
+                                               'pattern': pattern,
+                                               'replacement': replacement,
+                                               'timestamp': timestamp})
 
     return corrected_messages
 
