@@ -16,6 +16,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# History:
+#
+# 2012-08-31, Chris Johnson <raugturi@gmail.com>:
+#     version 0.4: use same timestamp as buffer when reprinting, instead
+#                  of epoch
+# 2012-08-31, Chris Johnson <raugturi@gmail.com>:
+#     version 0.3: switch to [var] style variables for print format
+# 2012-08-30, Chris Johnson <raugturi@gmail.com>:
+#     version 0.2: fixed search for typos so if regex fails it falls back
+#                  to string.find
+# 2012-08-30, Chris Johnson <raugturi@gmail.com>:
+#     version 0.1: initial release
+
 import_ok = True
 
 try:
@@ -35,7 +48,7 @@ except ImportError as message:
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '0.1'
+SCRIPT_VERSION = '0.4'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
