@@ -8,8 +8,7 @@ they send a correction string (ex: s/typo/replacement).
 ### check_every
 
 Interval, in seconds, between each check for expired messages. If set to 0 no
-check will be performed and all messages will be saved indefinitely.  This will
-most likely use a lot of memory.
+check will be performed and all messages will be saved indefinitely.
 
 ### data_timeout
 
