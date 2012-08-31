@@ -25,13 +25,13 @@ until they expire.
 Format string for the printed corrections (Default: "%(nick)s: %(corrected)s").
 Variables allowed:
 
-* nick:        The nick of the person who sent the messages.
-* corrected:   The corrected text of the previous message(s).
-* correction:  The correction (format: s/typo/replacement).
-* original:    The original message before correction.
-* pattern:     The "typo" portion of the correction.
-* replacement: The "replacement" portion of the correction.
-* timestamp:   The timestamp of the original message.
+* **nick**:        The nick of the person who sent the messages.
+* **corrected**:   The corrected text of the previous message(s).
+* **correction**:  The correction (format: s/typo/replacement).
+* **original**:    The original message before correction.
+* **pattern**:     The "typo" portion of the correction.
+* **replacement**: The "replacement" portion of the correction.
+* **timestamp**:   The timestamp of the original message.
 
 ### print_limit
 
