@@ -18,6 +18,8 @@
 
 # History:
 #
+# 2012-09-01, Chris Johnson <raugturi@gmail.com>:
+#     version 0.5: don't log the reprinted messages
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
 #     version 0.4: use same timestamp as buffer when reprinting, instead
 #                  of epoch
@@ -48,7 +50,7 @@ except ImportError as message:
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '0.4'
+SCRIPT_VERSION = '0.5'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
@@ -212,7 +214,7 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
                     corrected_msg = printformat
                     for k, v in cm.iteritems():
                         corrected_msg = corrected_msg.replace('[%s]' % k, v)
-                    weechat.prnt(buffer, corrected_msg)
+                    weechat.prnt_date_tags(buffer, 0, 'no_log', corrected_msg)
         else:
             # If it's not a correction, store the message in LASTWORDS.
             log.insert(0, {'message': message, 'timestamp': date})
