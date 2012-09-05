@@ -59,8 +59,11 @@
 # History:
 #
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
+#     version 0.7: fix bug when restoring defaults for options that require
+#                  integer values
+# 2012-09-05, Chris Johnson <raugturi@gmail.com>:
 #     version 0.6: copy info from README into script and shorten the variable
-#                  descriptions.
+#                  descriptions
 # 2012-09-01, Chris Johnson <raugturi@gmail.com>:
 #     version 0.5: don't log the reprinted messages
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
@@ -173,7 +176,7 @@ def get_option_int(option):
     try:
         value = int(weechat.config_get_plugin(option))
     except ValueError:
-        weechat.config_set_plugin(option, default)
+        weechat.config_set_plugin(option, settings[option])
         value = int(weechat.config_get_plugin(option))
 
     return value
@@ -284,7 +287,7 @@ def load_config(data=None, option=None, value=None):
             if not weechat.config_is_set_plugin(option):
                 weechat.config_set_plugin(option, default)
 
-    if not option or option == 'check_every':
+    if not option or option.endswith('check_every'):
         # If hook_timer for clearing old messages is set already, clear it.
         old_hook = globals().get('CLEAR_HOOK', None)
         if old_hook is not None:
