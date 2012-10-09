@@ -58,6 +58,8 @@
 
 # History:
 #
+# 2012-10-08, Chris Johnson <raugturi@gmail.com>:
+#     version 0.8: remove empty buffers and nicks during clean-up
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
 #     version 0.7: fix bug when restoring defaults for options that require
 #                  integer values
@@ -96,7 +98,7 @@ except ImportError as message:
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '0.5'
+SCRIPT_VERSION = '0.8'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
@@ -209,10 +211,14 @@ def clear_messages_cb(data, remaining_calls):
     data_timeout = get_option_int('data_timeout')
     if data_timeout:
         expiration = time.time() - data_timeout
-        for buff in LASTWORDS:
-            for nick in LASTWORDS[buff]:
+        for buff in LASTWORDS.keys():
+            for nick in LASTWORDS[buff].keys():
                 LASTWORDS[buff][nick] = valid_messages(LASTWORDS[buff][nick],
                                                        expiration)
+                if not LASTWORDS[buff][nick]:
+                    del LASTWORDS[buff][nick]
+            if not LASTWORDS[buff]:
+                del LASTWORDS[buff]
 
     return weechat.WEECHAT_RC_OK
 
