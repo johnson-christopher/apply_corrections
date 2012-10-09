@@ -59,29 +59,32 @@
 # History:
 #
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
-#     version 0.9: use defaultdict to handle missing keys, flatten dict by
-#                  using (buffer, nick) tuple as key, simplify message logging
-#                  logic, rename some stuff for clarity.
+#     version 0.10: fix get_corrected_messages so that the most recent messages
+#                   are corrected and returned
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
-#     version 0.8: remove empty buffers and nicks during clean-up
+#     version 0.9:  use defaultdict to handle missing keys, flatten dict by
+#                   using (buffer, nick) tuple as key, simplify message logging
+#                   logic, rename some stuff for clarity.
+# 2012-10-08, Chris Johnson <raugturi@gmail.com>:
+#     version 0.8:  remove empty buffers and nicks during clean-up
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
-#     version 0.7: fix bug when restoring defaults for options that require
-#                  integer values
+#     version 0.7:  fix bug when restoring defaults for options that require
+#                   integer values
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
-#     version 0.6: copy info from README into script and shorten the variable
-#                  descriptions
+#     version 0.6:  copy info from README into script and shorten the variable
+#                   descriptions
 # 2012-09-01, Chris Johnson <raugturi@gmail.com>:
-#     version 0.5: don't log the reprinted messages
+#     version 0.5:  don't log the reprinted messages
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
-#     version 0.4: use same timestamp as buffer when reprinting, instead
-#                  of epoch
+#     version 0.4:  use same timestamp as buffer when reprinting, instead
+#                   of epoch
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
-#     version 0.3: switch to [var] style variables for print format
+#     version 0.3:  switch to [var] style variables for print format
 # 2012-08-30, Chris Johnson <raugturi@gmail.com>:
-#     version 0.2: fixed search for typos so if regex fails it falls back
-#                  to string.find
+#     version 0.2:  fixed search for typos so if regex fails it falls back
+#                   to string.find
 # 2012-08-30, Chris Johnson <raugturi@gmail.com>:
-#     version 0.1: initial release
+#     version 0.1:  initial release
 
 import_ok = True
 
@@ -144,7 +147,7 @@ def get_corrected_messages(nick, log, correction):
     corrected_messages = []
     pattern, replacement = correction.split('/')[1:3]
 
-    for message in sorted(log, key=itemgetter('timestamp')):
+    for message in log:
         if print_limit and len(corrected_messages) >= print_limit:
             break
         original = message.get('message', '')
@@ -171,7 +174,7 @@ def get_corrected_messages(nick, log, correction):
                                                'replacement': replacement,
                                                'timestamp': timestamp})
 
-    return corrected_messages
+    return sorted(corrected_messages, key=itemgetter('timestamp'))
 
 
 def get_option_int(option):
