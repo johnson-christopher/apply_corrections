@@ -59,32 +59,32 @@
 # History:
 #
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
-#     version 0.10: fix get_corrected_messages so that the most recent messages
-#                   are corrected and returned
+#     version 1.0: fix get_corrected_messages so that the most recent messages
+#                  are corrected and returned
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
-#     version 0.9:  use defaultdict to handle missing keys, flatten dict by
-#                   using (buffer, nick) tuple as key, simplify message logging
-#                   logic, rename some stuff for clarity.
+#     version 0.9: use defaultdict to handle missing keys, flatten dict by
+#                  using (buffer, nick) tuple as key, simplify message logging
+#                  logic, rename some stuff for clarity.
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
-#     version 0.8:  remove empty buffers and nicks during clean-up
+#     version 0.8: remove empty buffers and nicks during clean-up
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
-#     version 0.7:  fix bug when restoring defaults for options that require
-#                   integer values
+#     version 0.7: fix bug when restoring defaults for options that require
+#                  integer values
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
-#     version 0.6:  copy info from README into script and shorten the variable
-#                   descriptions
+#     version 0.6: copy info from README into script and shorten the variable
+#                  descriptions
 # 2012-09-01, Chris Johnson <raugturi@gmail.com>:
-#     version 0.5:  don't log the reprinted messages
+#     version 0.5: don't log the reprinted messages
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
-#     version 0.4:  use same timestamp as buffer when reprinting, instead
-#                   of epoch
+#     version 0.4: use same timestamp as buffer when reprinting, instead
+#                  of epoch
 # 2012-08-31, Chris Johnson <raugturi@gmail.com>:
-#     version 0.3:  switch to [var] style variables for print format
+#     version 0.3: switch to [var] style variables for print format
 # 2012-08-30, Chris Johnson <raugturi@gmail.com>:
-#     version 0.2:  fixed search for typos so if regex fails it falls back
-#                   to string.find
+#     version 0.2: fixed search for typos so if regex fails it falls back
+#                  to string.find
 # 2012-08-30, Chris Johnson <raugturi@gmail.com>:
-#     version 0.1:  initial release
+#     version 0.1: initial release
 
 import_ok = True
 
@@ -106,7 +106,7 @@ except ImportError as message:
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '0.9'
+SCRIPT_VERSION = '1.0'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
