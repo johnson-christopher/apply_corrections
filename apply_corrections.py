@@ -59,6 +59,10 @@
 # History:
 #
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
+#     version 0.9: use defaultdict to handle missing keys, flatten dict by
+#                  using (buffer, nick) tuple as key, simplify message logging
+#                  logic, rename some stuff for clarity.
+# 2012-10-08, Chris Johnson <raugturi@gmail.com>:
 #     version 0.8: remove empty buffers and nicks during clean-up
 # 2012-09-05, Chris Johnson <raugturi@gmail.com>:
 #     version 0.7: fix bug when restoring defaults for options that require
@@ -92,13 +96,14 @@ try:
     import re
     import time
     from operator import itemgetter
+    from collections import defaultdict
 except ImportError as message:
     print('Missing package(s) for %s: %s' % (SCRIPT_NAME, message))
     import_ok = False
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '0.8'
+SCRIPT_VERSION = '0.9'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
@@ -111,7 +116,7 @@ settings = {'check_every': '5',
             'print_limit': '1'}
 
 # Initialize the dictionary to store most recent messages per buffer per nick.
-LASTWORDS = {}
+LASTWORDS = defaultdict(list)
 
 
 def apply_correction(message, pattern, replacement):
@@ -129,7 +134,7 @@ def apply_correction(message, pattern, replacement):
     return message
 
 
-def corrected_messages(nick, log, correction):
+def get_corrected_messages(nick, log, correction):
     """
     Return list of messages that match the pattern, with corrections applied.
     Limited to print_limit items, sorted by timestamp ascending.
@@ -184,7 +189,7 @@ def get_option_int(option):
     return value
 
 
-def valid_messages(nick, expiration):
+def get_valid_messages(nick, expiration):
     """
     Return only the messages that haven't expired.
     """
@@ -210,15 +215,13 @@ def clear_messages_cb(data, remaining_calls):
 
     data_timeout = get_option_int('data_timeout')
     if data_timeout:
-        expiration = time.time() - data_timeout
-        for buff in LASTWORDS.keys():
-            for nick in LASTWORDS[buff].keys():
-                LASTWORDS[buff][nick] = valid_messages(LASTWORDS[buff][nick],
-                                                       expiration)
-                if not LASTWORDS[buff][nick]:
-                    del LASTWORDS[buff][nick]
-            if not LASTWORDS[buff]:
-                del LASTWORDS[buff]
+        expiry = time.time() - data_timeout
+        for buff, nick in LASTWORDS.keys():
+            valid_messages = get_valid_messages(LASTWORDS[(buff,nick)], expiry)
+            if valid_messages:
+                LASTWORDS[(buff, nick)] = valid_messages
+            else:
+                del LASTWORDS[(buff,nick)]
 
     return weechat.WEECHAT_RC_OK
 
@@ -234,14 +237,8 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
 
     # Don't do anything if the message isn't suppose to be displayed.
     if disp:
-        # If the buffer or nick are not in LASTWORDS, add them.
         buffer_name = weechat.buffer_get_string(buffer, 'name')
-        if buffer_name not in LASTWORDS:
-            LASTWORDS[buffer_name] = {}
-        if nick not in LASTWORDS[buffer_name]:
-            LASTWORDS[buffer_name][nick] = []
-
-        log = LASTWORDS[buffer_name][nick]
+        log = LASTWORDS[(buffer_name, nick)]
 
         # Matches on both 's/typo/replacement' and 'nick: s/typo/replacement',
         # mainly because of bitlbee since it puts your nick in front of
@@ -261,21 +258,19 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
             # messages with corrections applied, in their original order.
             correction = match.group(4)
             if log and correction:
-                printformat = weechat.config_get_plugin('print_format')
-                for cm in corrected_messages(nick, log, correction):
-                    corrected_msg = printformat
+                print_format = weechat.config_get_plugin('print_format')
+                for cm in get_corrected_messages(nick, log, correction):
+                    corrected_msg = print_format
                     for k, v in cm.iteritems():
                         corrected_msg = corrected_msg.replace('[%s]' % k, v)
                     weechat.prnt_date_tags(buffer, 0, 'no_log', corrected_msg)
         else:
             # If it's not a correction, store the message in LASTWORDS.
             log.insert(0, {'message': message, 'timestamp': date})
-
             # If there's a per-nick limit, shorten the list to match.
             message_limit = get_option_int('message_limit')
-            if message_limit:
-                log = log[:message_limit]
-            LASTWORDS[buffer_name][nick] = log
+            while message_limit and len(log) > message_limit:
+                log.pop()
 
     return weechat.WEECHAT_RC_OK
 
