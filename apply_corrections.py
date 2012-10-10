@@ -192,16 +192,16 @@ def get_option_int(option):
     return value
 
 
-def get_valid_messages(nick, expiration):
+def get_valid_messages(log, expiry):
     """
     Return only the messages that haven't expired.
     """
 
     valid = []
-    for message in nick:
+    for message in log:
         try:
             timestamp = int(message.get('timestamp', 0))
-            if timestamp > expiration:
+            if timestamp > expiry:
                 valid.append(message)
         except ValueError:
             continue
