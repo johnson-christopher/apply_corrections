@@ -58,6 +58,8 @@
 
 # History:
 #
+# 2012-10-09, Chris Johnson <raugturi@gmail.com>:
+#     version 1.1: change some more variable names for clarity/consistency
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
 #     version 1.0: fix get_corrected_messages so that the most recent messages
 #                  are corrected and returned
@@ -106,7 +108,7 @@ except ImportError as message:
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '1.0'
+SCRIPT_VERSION = '1.1'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
