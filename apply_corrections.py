@@ -58,6 +58,9 @@
 
 # History:
 #
+# 2013-06-24, Chris Johnson <raugturi@gmail.com>:
+#     version 1.2: declare SCRIPT_ variables before imports since one was being
+#                  used there
 # 2012-10-09, Chris Johnson <raugturi@gmail.com>:
 #     version 1.1: change some more variable names for clarity/consistency
 # 2012-10-08, Chris Johnson <raugturi@gmail.com>:
@@ -88,6 +91,13 @@
 # 2012-08-30, Chris Johnson <raugturi@gmail.com>:
 #     version 0.1: initial release
 
+SCRIPT_NAME = 'apply_corrections'
+SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
+SCRIPT_VERSION = '1.1'
+SCRIPT_LICENSE = 'GPL3'
+SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
+              "user's previous message(s) with the corrected text instead."
+
 import_ok = True
 
 try:
@@ -105,13 +115,6 @@ try:
 except ImportError as message:
     print('Missing package(s) for %s: %s' % (SCRIPT_NAME, message))
     import_ok = False
-
-SCRIPT_NAME = 'apply_corrections'
-SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '1.1'
-SCRIPT_LICENSE = 'GPL3'
-SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
-              "user's previous message(s) with the corrected text instead."
 
 # Default settings for the plugin.
 settings = {'check_every': '5',
