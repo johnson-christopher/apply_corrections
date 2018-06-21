@@ -58,6 +58,9 @@
 
 # History:
 #
+# 2014-05-10, Sébastien Helleu <flashcode@flashtux.org>
+#     version 1.2: change hook_print callback argument type of
+#                  displayed/highlight (WeeChat >= 1.0)
 # 2013-06-24, Chris Johnson <raugturi@gmail.com>:
 #     version 1.2: declare SCRIPT_ variables before imports since one was being
 #                  used there
@@ -244,7 +247,7 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
     """
 
     # Don't do anything if the message isn't suppose to be displayed.
-    if disp:
+    if int(disp):
         buffer_name = weechat.buffer_get_string(buffer, 'name')
         log = LASTWORDS[(buffer_name, nick)]
 
