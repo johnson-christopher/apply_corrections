@@ -58,6 +58,8 @@
 
 # History:
 #
+# 2018-06-21, Chris Johnson <raugturi@gmail.com>:
+#     version 1.3: support python3
 # 2014-05-10, Sébastien Helleu <flashcode@flashtux.org>
 #     version 1.2: change hook_print callback argument type of
 #                  displayed/highlight (WeeChat >= 1.0)
@@ -96,7 +98,7 @@
 
 SCRIPT_NAME = 'apply_corrections'
 SCRIPT_AUTHOR = 'Chris Johnson <raugturi@gmail.com>'
-SCRIPT_VERSION = '1.2'
+SCRIPT_VERSION = '1.3'
 SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = "When a correction (ex: s/typo/replacement) is sent, print the "\
               "user's previous message(s) with the corrected text instead."
@@ -116,7 +118,7 @@ try:
     from operator import itemgetter
     from collections import defaultdict
 except ImportError as message:
-    print('Missing package(s) for %s: %s' % (SCRIPT_NAME, message))
+    print('Missing package(s) for {}: {}'.format(SCRIPT_NAME, message))
     import_ok = False
 
 # Default settings for the plugin.
@@ -161,7 +163,7 @@ def get_corrected_messages(nick, log, correction):
         original = message.get('message', '')
         if original:
             try:
-                match = re.match(re.compile('.*%s.*' % pattern), original)
+                match = re.match(re.compile('.*{}.*'.format(pattern)), original)
             except:
                 match = original.find(pattern) != -1
             finally:
@@ -260,7 +262,7 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
         valid_nick = r'([@~&!%+])?([-a-zA-Z0-9\[\]\\`_^\{|\}]+)'
         valid_correction = r's/[^/]*/[^/]*'
         correction_message_pattern = re.compile(
-                r'(%s:\s*)?(%s)(/)?$' % (valid_nick, valid_correction))
+                r'({}:\s*)?({})(/)?$'.format(valid_nick, valid_correction))
         match = re.match(correction_message_pattern, message)
 
         if match:
@@ -272,8 +274,8 @@ def handle_message_cb(data, buffer, date, tags, disp, hl, nick, message):
                 print_format = weechat.config_get_plugin('print_format')
                 for cm in get_corrected_messages(nick, log, correction):
                     corrected_msg = print_format
-                    for k, v in cm.iteritems():
-                        corrected_msg = corrected_msg.replace('[%s]' % k, v)
+                    for k, v in cm.items():
+                        corrected_msg = corrected_msg.replace('[{}]'.format(k), v)
                     weechat.prnt_date_tags(buffer, 0, 'no_log', corrected_msg)
         else:
             # If it's not a correction, store the message in LASTWORDS.
@@ -295,7 +297,7 @@ def load_config(data=None, option=None, value=None):
 
     # On initial load set any unset options to the defaults.
     if not option:
-        for option, default in settings.iteritems():
+        for option, default in settings.items():
             if not weechat.config_is_set_plugin(option):
                 weechat.config_set_plugin(option, default)
 
@@ -347,7 +349,7 @@ if __name__ == '__main__' and import_ok:
         desc_options()
 
         # Register hook to run load_config when options are changed.
-        weechat.hook_config('plugins.var.python.%s.*' % SCRIPT_NAME,
+        weechat.hook_config('plugins.var.python.{}.*'.format(SCRIPT_NAME),
                             'load_config', '')
 
         # Register hook_print to process each new message as it comes in.
